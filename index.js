@@ -1,4 +1,4 @@
-var utils = require('loader-utils');
+var loaderUtils = require('loader-utils');
 var fs = require('fs');
 var path = require('path');
 var nunjucks = require('nunjucks');
@@ -50,14 +50,15 @@ var NunjucksLoader = nunjucks.Loader.extend({
 module.exports = function(content) {
 	this.cacheable();
 
-	const callback = this.async();
-	const opt = utils.parseQuery(this.query);
+	const options = Object.assign(
+		{},
+		loaderUtils.getOptions(this)
+	);
 
-	const nunjucksSearchPaths = opt.searchPaths;
-	const nunjucksContext = opt.context;
+	const callback = this.async();
 
 	const loader = new NunjucksLoader(
-		nunjucksSearchPaths,
+		options.searchPaths,
 		path => this.addDependency(path)
 	);
 
@@ -65,7 +66,7 @@ module.exports = function(content) {
 	nunjucks.configure(null, { watch: false });
 
 	const template = nunjucks.compile(content, nunjEnv);
-	html = template.render(nunjucksContext);
+	const html = template.render(this.rootContext);
 
 	callback(null, `module.exports = ${JSON.stringify(html)}`);
 };
