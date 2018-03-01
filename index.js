@@ -67,5 +67,5 @@ module.exports = function(content) {
 	const template = nunjucks.compile(content, nunjEnv);
 	html = template.render(nunjucksContext);
 
-	callback(null, html);
+	callback(null, `module.exports = ${JSON.stringify(html)}`);
 };
