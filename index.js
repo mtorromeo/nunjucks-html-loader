@@ -4,9 +4,9 @@ var path = require('path');
 var nunjucks = require('nunjucks');
 
 var NunjucksLoader = nunjucks.Loader.extend({
-	//Based off of the Nunjucks 'FileSystemLoader'
+	// Based off of the Nunjucks 'FileSystemLoader'
 
-	init: function(searchPaths, sourceFoundCallback) {
+	init(searchPaths, sourceFoundCallback) {
 		this.sourceFoundCallback = sourceFoundCallback;
 		if (searchPaths) {
 			searchPaths = Array.isArray(searchPaths) ? searchPaths : [searchPaths];
@@ -17,7 +17,7 @@ var NunjucksLoader = nunjucks.Loader.extend({
 		}
 	},
 
-	getSource: function(name) {
+	getSource(name) {
 		var fullpath = null;
 		var paths = this.searchPaths;
 
@@ -50,23 +50,21 @@ var NunjucksLoader = nunjucks.Loader.extend({
 module.exports = function(content) {
 	this.cacheable();
 
-	var callback = this.async();
-	var opt = utils.parseQuery(this.query);
+	const callback = this.async();
+	const opt = utils.parseQuery(this.query);
 
-	var nunjucksSearchPaths = opt.searchPaths;
-	var nunjucksContext = opt.context;
+	const nunjucksSearchPaths = opt.searchPaths;
+	const nunjucksContext = opt.context;
 
-	var loader = new NunjucksLoader(
+	const loader = new NunjucksLoader(
 		nunjucksSearchPaths,
-		function(path) {
-			this.addDependency(path);
-		}.bind(this)
+		path => this.addDependency(path)
 	);
 
-	var nunjEnv = new nunjucks.Environment(loader);
+	const nunjEnv = new nunjucks.Environment(loader);
 	nunjucks.configure(null, { watch: false });
 
-	var template = nunjucks.compile(content, nunjEnv);
+	const template = nunjucks.compile(content, nunjEnv);
 	html = template.render(nunjucksContext);
 
 	callback(null, html);
