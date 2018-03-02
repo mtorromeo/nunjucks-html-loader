@@ -52,7 +52,8 @@ module.exports = function(content) {
 
 	const options = Object.assign(
 		{},
-		loaderUtils.getOptions(this)
+		loaderUtils.getOptions(this),
+		{watch: false}
 	);
 
 	const callback = this.async();
@@ -62,8 +63,10 @@ module.exports = function(content) {
 		path => this.addDependency(path)
 	);
 
+	Reflect.deleteProperty(options, 'searchPaths');
+
 	const nunjEnv = new nunjucks.Environment(loader);
-	nunjucks.configure(null, { watch: false });
+	nunjucks.configure(null, options);
 
 	const template = nunjucks.compile(content, nunjEnv);
 	const html = template.render(this.rootContext);
