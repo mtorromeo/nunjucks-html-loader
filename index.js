@@ -34,7 +34,7 @@ var NunjucksLoader = nunjucks.Loader.extend({
 		}
 
 		if (!fullpath) {
-			return null;
+			throw new Error(`Source ${name} not found in any path: ${JSON.stringify(paths)}`);
 		}
 
 		this.sourceFoundCallback(fullpath);
